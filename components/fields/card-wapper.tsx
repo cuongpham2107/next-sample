@@ -13,10 +13,10 @@ interface CardWapperProps {
 export const CardWapper = ({ children, headerLabel, backButtonLabel, backButtonHref, showSocial = false }: CardWapperProps) => {
     return (
         <>
-            <Card className="max-w-[400px] shadow-sm">
-                <CardHeader className="flex gap-3">
-                    <div className="flex flex-col">
-                        <p className="text-md">Auth</p>
+            <Card className="min-w-[400px] bg-gray-200 dark:bg-neutral-950 shadow-xl">
+                <CardHeader className="flex gap-4 justify-center items-center">
+                    <div className="flex flex-col p-2 ">
+                        <p className="text-xl font-semibold">Đăng nhập</p>
                     </div>
                 </CardHeader>
                 <Divider />

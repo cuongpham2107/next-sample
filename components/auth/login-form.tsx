@@ -6,7 +6,9 @@ import { CardWapper } from "../fields/card-wapper";
 import { LoginSchema } from "@/schemas/auth";
 import { Button, Input } from "@nextui-org/react";
 import { EyeFilledIcon, EyeSlashFilledIcon, MailIcon } from "@/components/icons";
-import { useMemo, useState } from "react";
+import { useMemo, useState,useTransition } from "react";
+import { FormError } from "../fields/form-error";
+import { login } from "@/actions/auth/login";
 
 
 
@@ -15,7 +17,8 @@ export const LoginForm = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [errors, setErrors] = useState<any[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [isPending, startTransition] = useTransition();
+    const [isLoading, setIsLoading] = useState(false);
     const onSubmit = async (e: any) => {
         e.preventDefault();
         setIsLoading(true);
@@ -30,6 +33,11 @@ export const LoginForm = () => {
                 }
                 setErrors(errArr);
                 throw err;
+            }else{
+                startTransition(() => {
+                    login(email, password);
+                })
+               
             }
         
             setErrors([]);
@@ -40,13 +48,6 @@ export const LoginForm = () => {
             setIsLoading(false);
         }
     };
-    const isInvalid = (errors: any, value: string) => {
-        if (email === "" || password === "") return false;
-        if (errors.length === 0) return false;
-        return errors.find((error: any) => error.for === value)?.message ? true : false;
-    };
-
-    const isInvalidMemo = useMemo(() => isInvalid(errors, "email"), [errors, email, password]);
 
     const [isVisible, setIsVisible] = useState(false);
 
@@ -64,12 +65,13 @@ export const LoginForm = () => {
                         placeholder="you@example.com"
                         labelPlacement="outside"
                         size="lg"
+                        disabled={isPending}
                         onChange={(e) => {
                             setErrors([]);
                             setEmail(e.target.value);
                         }}
-                        isInvalid={isInvalid(errors, "email")} 
-                        errorMessage={errors.find((error) => error.for === "email")?.message}
+                        // isInvalid={isInvalid(errors, "email")} 
+                        // errorMessage={errors.find((error) => error.for === "email")?.message}
                         startContent={
                             <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                         }
@@ -79,12 +81,13 @@ export const LoginForm = () => {
                         placeholder="Enter your password"
                         labelPlacement="outside"
                         size="lg"
+                        disabled={isPending}
                         onChange={(e) => {
                             setErrors([]);
                             setPassword(e.target.value);
                         }}
-                        isInvalid={isInvalid(errors, "email")} 
-                        errorMessage={errors.find((error) => error.for === "password")?.message}
+                        // isInvalid={isInvalid(errors, "email")} 
+                        // errorMessage={errors.find((error) => error.for === "password")?.message}
                       
                         endContent={
                             <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
@@ -98,8 +101,10 @@ export const LoginForm = () => {
                         type={isVisible ? "text" : "password"}
                       
                         />
+                        <FormError errors={errors} />
                         <Button 
                             type="submit" 
+                            disabled={isPending}
                             color="danger"
                         >Login</Button>
                 </form>
