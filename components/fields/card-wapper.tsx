@@ -1,6 +1,6 @@
 "use client"
 import { Card, CardHeader, CardBody, CardFooter, Divider, Link, Image, Button } from "@nextui-org/react";
-import { GithubIcon, GoogleIcon, TwitterIcon } from "../icons";
+import { GithubIcon, GoogleIcon, TwitterIcon } from "@/components/icons";
 
 interface CardWapperProps {
     children: React.ReactNode;
@@ -16,7 +16,7 @@ export const CardWapper = ({ children, headerLabel, backButtonLabel, backButtonH
             <Card className="min-w-[400px] bg-gray-200 dark:bg-neutral-950 shadow-xl">
                 <CardHeader className="flex gap-4 justify-center items-center">
                     <div className="flex flex-col p-2 ">
-                        <p className="text-xl font-semibold">Đăng nhập</p>
+                        <p className="text-xl font-semibold">{headerLabel}</p>
                     </div>
                 </CardHeader>
                 <Divider />

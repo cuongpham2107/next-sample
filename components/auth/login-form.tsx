@@ -1,13 +1,11 @@
 "use client"
-import * as z from "zod";
 
-import { CardWapper } from "../fields/card-wapper";
+import { CardWapper } from "@/components/fields/card-wapper";
 
-import { LoginSchema } from "@/schemas/auth";
 import { Button, Input } from "@nextui-org/react";
 import { EyeFilledIcon, EyeSlashFilledIcon, MailIcon } from "@/components/icons";
 import { useMemo, useState,useTransition } from "react";
-import { FormError } from "../fields/form-error";
+import { FormError } from "@/components/fields/form-error";
 import { login } from "@/actions/auth/login";
 
 
@@ -22,31 +20,15 @@ export const LoginForm = () => {
     const onSubmit = async (e: any) => {
         e.preventDefault();
         setIsLoading(true);
-        try {
-            const data = LoginSchema.safeParse({ email, password});
-            // refine errors
-            if (!data.success) {
-                let errArr: any[] = [];
-                const { errors: err } = data.error;
-                for (var i = 0; i < err.length; i++) {
-                errArr.push({ for: err[i].path[0], message: err[i].message });
+        setErrors([]);
+        startTransition(() => {
+            login(email, password)
+            .then((v : any) => {
+                if (v.message === "error") {
+                    setErrors(v.data);
                 }
-                setErrors(errArr);
-                throw err;
-            }else{
-                startTransition(() => {
-                    login(email, password);
-                })
-               
-            }
-        
-            setErrors([]);
-        } catch (error) {
-            console.log(error);
-        }
-        finally {
-            setIsLoading(false);
-        }
+            })  
+        }) 
     };
 
     const [isVisible, setIsVisible] = useState(false);
@@ -56,7 +38,7 @@ export const LoginForm = () => {
         <CardWapper 
             headerLabel="Welcome back"
             backButtonLabel="Don't have an account?"
-            backButtonHref="/auth/register"
+            backButtonHref="register"
             showSocial={true}>
                 <form onSubmit={onSubmit} className="flex flex-col gap-4" >
                     <Input 
@@ -70,8 +52,6 @@ export const LoginForm = () => {
                             setErrors([]);
                             setEmail(e.target.value);
                         }}
-                        // isInvalid={isInvalid(errors, "email")} 
-                        // errorMessage={errors.find((error) => error.for === "email")?.message}
                         startContent={
                             <MailIcon className="text-2xl text-default-400 pointer-events-none flex-shrink-0" />
                         }
@@ -86,9 +66,6 @@ export const LoginForm = () => {
                             setErrors([]);
                             setPassword(e.target.value);
                         }}
-                        // isInvalid={isInvalid(errors, "email")} 
-                        // errorMessage={errors.find((error) => error.for === "password")?.message}
-                      
                         endContent={
                             <button className="focus:outline-none" type="button" onClick={toggleVisibility}>
                             {isVisible ? (
@@ -99,7 +76,6 @@ export const LoginForm = () => {
                             </button>
                         }
                         type={isVisible ? "text" : "password"}
-                      
                         />
                         <FormError errors={errors} />
                         <Button 

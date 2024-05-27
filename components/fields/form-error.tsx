@@ -1,3 +1,5 @@
+import React from "react";
+
 export const FormError = ({ errors }: { errors: any[] }) => {
     return (
         <div className="flex flex-col gap-2">
