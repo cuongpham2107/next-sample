@@ -18,12 +18,9 @@ export default {
                     const user =  await getUserByEmail(data.email);
                     if(!user || !user.password) return null;
                     
-
                     const passwordMatch = await bcrypt.compare(data.password, user.password);
 
-                    if(passwordMatch){
-                        return user;
-                    }
+                    if(passwordMatch) return user;
                 }
                 return null
             },
